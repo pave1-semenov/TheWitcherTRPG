@@ -1,5 +1,5 @@
 import { getCurrentCharacter } from '../helper.js';
-import { SocketMessage } from '../socket/socketMessage.js';
+import { emitForGM } from '../socket/socketMessage.js';
 
 export function addStatusEffectChatListeners(html) {
     // setup chat listener messages for each message as some need the message context instead of chatlog context.
@@ -24,6 +24,17 @@ export async function onApplyStatus(event) {
     let target = getCurrentCharacter();
 
     applyStatusEffectToActor(target.uuid, statusId, event.currentTarget.dataset.duration);
+}
+
+export async function applyStatusEffectToTargets(statusEffects, duration) {
+    let targets = game.user.targets;
+
+    if (targets.size == 0) return;
+
+    targets.forEach(target => {
+        let actorUuid = target.actor.uuid;
+        statusEffects.forEach(effect => applyStatusEffectToActor(actorUuid, effect.statusEffect, duration));
+    });
 }
 
 export async function applyStatusEffectToActor(actorUuid, statusEffectId, duration) {
@@ -62,5 +73,5 @@ function handleStatusCounterIntegration(target, statusId, duration) {
 }
 
 function sendToGm(actorUuid, statusEffectId, duration) {
-    SocketMessage.emitForGM('applyStatusEffectToActor', { actorUuid, statusEffectId, duration });
+    emitForGM('applyStatusEffectToActor', [actorUuid, statusEffectId, duration]);
 }
