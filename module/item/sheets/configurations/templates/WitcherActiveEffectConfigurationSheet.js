@@ -2,21 +2,20 @@ import WitcherConfigurationSheet from './WitcherConfigurationSheet.js';
 
 export default class WitcheActiveEffectConfigurationSheet extends WitcherConfigurationSheet {
     /** @override */
-    _prepareContext() {
-        const data = super._prepareContext();
+    async _prepareContext() {
+        const context = await super._prepareContext();
         // Prepare active effects for easier access
-        data.effects = this.prepareActiveEffectCategories(this.item.effects);
+        context.effects = this.prepareActiveEffectCategories(context.system.effects);
 
-        return data;
+        return context;
     }
 
     _onRender(context, options) {
+        super._onRender(context, options);
         this.activateListeners($(this.element));
     }
 
     activateListeners(html) {
-        super.activateListeners(html);
-
         // Active Effect management
         html.on('click', '.effect-control', ev => this.onManageActiveEffect(ev, this.item));
     }

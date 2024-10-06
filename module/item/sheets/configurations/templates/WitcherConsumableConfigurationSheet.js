@@ -2,12 +2,11 @@ import WitcherConfigurationSheet from './WitcherConfigurationSheet.js';
 
 export default class WitcherConsumableConfigurationSheet extends WitcherConfigurationSheet {
     _onRender(context, options) {
+        super._onRender(context, options);
         this.activateListeners($(this.element));
     }
 
     activateListeners(html) {
-        super.activateListeners(html);
-
         html.find('.add-global-modifier').on('click', this._onAddGlobalModifier.bind(this));
         html.find('.edit-global-modifier').on('blur', this._onEditGlobalModifier.bind(this));
         html.find('.remove-global-modifier').on('click', this._oRemoveGlobalModifier.bind(this));

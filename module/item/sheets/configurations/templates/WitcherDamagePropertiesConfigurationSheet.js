@@ -2,11 +2,11 @@ import WitcherConfigurationSheet from './WitcherConfigurationSheet.js';
 
 export default class WitcherDamagePropertiesConfigurationSheet extends WitcherConfigurationSheet {
     _onRender(context, options) {
+        super._onRender(context, options);
         this.activateListeners($(this.element));
     }
 
     activateListeners(html) {
-        super.activateListeners(html);
         html.find('.add-effect-damageProperties').on('click', this._onAddEffectDamageProperties.bind(this));
         html.find('.edit-effect-damageProperties').on('blur', this._onEditEffectDamageProperties.bind(this));
         html.find('.remove-effect-damageProperties').on('click', this._oRemoveEffectDamageProperties.bind(this));

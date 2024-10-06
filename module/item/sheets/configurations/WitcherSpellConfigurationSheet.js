@@ -1,12 +1,22 @@
-import WitcherDamagePropertiesConfigurationSheet from './WitcherDamagePropertiesConfigurationSheet.js';
+import WitcherDamagePropertiesConfigurationSheet from './templates/WitcherDamagePropertiesConfigurationSheet.js';
 
 export default class WitcherSpellConfigurationSheet extends WitcherDamagePropertiesConfigurationSheet {
+    static DEFAULT_OPTIONS = {
+        classes: ['item-spell']
+    };
+
+    static PARTS = {
+        spellConfiguration: {
+            template: `systems/TheWitcherTRPG/templates/sheets/item/configuration/spellConfiguration.hbs`
+        }
+    };
+
     _onRender(context, options) {
+        super._onRender(context, options);
         this.activateListeners($(this.element));
     }
 
     activateListeners(html) {
-        super.activateListeners(html);
         html.find('.add-effect-self').on('click', this._onAddEffectToArray.bind(this, 'selfEffects'));
         html.find('.edit-effect-self').on('blur', this._onEditEffectOfArray.bind(this, 'selfEffects'));
         html.find('.remove-effect-self').on('click', this._oRemoveEffectFromArray.bind(this, 'selfEffects'));

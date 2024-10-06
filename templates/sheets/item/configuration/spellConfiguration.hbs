@@ -7,7 +7,7 @@
             </th>
             <th>{{localize "WITCHER.Item.Effect"}}</th>
         </tr>
-        {{#each item.system.selfEffects as |effect name|}}
+        {{#each system.selfEffects as |effect name|}}
             <tr class="list-item" data-id="{{effect.id}}">
                 <td>
                     <a class="remove-effect-self" title="{{localize "WITCHER.Item.RemoveEffect"}}"><i
@@ -31,7 +31,7 @@
             </th>
             <th>{{localize "WITCHER.Item.Effect"}}</th>
         </tr>
-        {{#each item.system.onHitEffects as |effect name|}}
+        {{#each system.onHitEffects as |effect name|}}
             <tr class="list-item" data-id="{{effect.id}}">
                 <td>
                     <a class="remove-effect-hit" title="{{localize "WITCHER.Item.RemoveEffect"}}"><i
@@ -47,7 +47,7 @@
         {{/each}}
     </table>
 
-    {{#if data.causeDamages}}
+    {{#if system.causeDamages}}
         {{>"systems/TheWitcherTRPG/templates/sheets/item/configuration/partials/damagePropertiesConfiguration.hbs"}}
     {{/if}}
 </form>

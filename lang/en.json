@@ -1,8 +1,10 @@
 {
     "TYPES": {
         "Item": {
+            "armor": "Armor",
             "effect": "Effect (Deprecated)",
-            "globalModifier": "Global Modifier"
+            "globalModifier": "Global Modifier",
+            "spell": "Spell"
         }
     },
     "WITCHER": {
