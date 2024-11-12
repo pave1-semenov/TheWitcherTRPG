@@ -1,5 +1,6 @@
 import { applyActiveEffectToActor, applyActiveEffectToActorViaId } from '../scripts/activeEffects/applyActiveEffect.js';
 import { applyStatusEffectToActor } from '../scripts/statusEffects/applyStatusEffect.js';
+import { updateItemByUuid } from '../scripts/item/updateItem.js';
 
 export const registerSocketListeners = function () {
     let SYSTEM_SOCKET = 'system.TheWitcherTRPG';
@@ -7,7 +8,8 @@ export const registerSocketListeners = function () {
     let callableFunctions = {
         applyStatusEffectToActor,
         applyActiveEffectToActor,
-        applyActiveEffectToActorViaId
+        applyActiveEffectToActorViaId,
+        updateItemByUuid
     };
 
     if (!game.socket || !game.user) return;

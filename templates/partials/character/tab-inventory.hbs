@@ -175,7 +175,12 @@
                                         {{/each}}
                                     </div>
                         </td>
-                        <td><a class="item-delete"><i class="fas fa-trash-alt"></i></a></td>
+                        <td>
+                            <a class="item-delete"><i class="fas fa-trash-alt"></i></a>
+                            {{#if weapon.canBeRepaired}}
+                            <a class="item-repair"><i class="fas fa-screwdriver-wrench"></i></a>
+                            {{/if}}
+                        </td>
                     </tr>
         </table>
         </td>
@@ -394,7 +399,12 @@
                                                 {{/each}}
                                             </div>
                                         </td>
-                                        <td><a class="item-delete"><i class="fas fa-trash-alt"></i></a></td>
+                                        <td>
+                                            <a class="item-delete"><i class="fas fa-trash-alt"></i></a>
+                                            {{#if armor.canBeRepaired}}
+                                            <a class="item-repair"><i class="fas fa-screwdriver-wrench"></i></a>
+                                            {{/if}}
+                                        </td>
                                     </tr>
                                 {{/if}}
                                 {{#if (eq type "enhancement")}}
@@ -419,7 +429,9 @@
                                                 </label>{{armor.system.effect}}
                                             </div>
                                         </td>
-                                        <td><a class="item-delete"><i class="fas fa-trash-alt"></i></a></td>
+                                        <td>
+                                            <a class="item-delete"><i class="fas fa-trash-alt"></i></a>
+                                        </td>
                                     </tr>
                                 {{/if}}
                             </table>
