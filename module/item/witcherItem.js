@@ -4,6 +4,7 @@ import { WITCHER } from '../setup/config.js';
 import AbilityTemplate from './ability-template.js';
 import { applyActiveEffectToActorViaId } from '../scripts/activeEffects/applyActiveEffect.js';
 import RepairSystem from "../item/systems/repair.js";
+import { emitForGM } from '../scripts/socket/socketMessage.js';
 
 export default class WitcherItem extends Item {
     async _preCreate(data, options, user) {
@@ -39,7 +40,18 @@ export default class WitcherItem extends Item {
         }
     }
 
+    async createRegionFromTemplateUuids(templateUuids, damage) {
+        this.createRegionFromTemplates(
+            templateUuids.map(uuid => fromUuidSync(uuid)),
+            damage
+        );
+    }
+
     async createRegionFromTemplates(templates, damage) {
+        if (!game.user.isGM) {
+            emitForGM('createRegionFromTemplateUuids', [this.uuid, templates.map(template => template.uuid), damage]);
+            return;
+        }
         templates.forEach(async template => {
             let origShape = template.object.shape ?? template.object._computeShape();
             let points = origShape.points ?? origShape.toPolygon().points;
