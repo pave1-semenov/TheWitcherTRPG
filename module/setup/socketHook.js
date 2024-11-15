@@ -1,6 +1,5 @@
 import { applyActiveEffectToActor, applyActiveEffectToActorViaId } from '../scripts/activeEffects/applyActiveEffect.js';
 import { applyStatusEffectToActor } from '../scripts/statusEffects/applyStatusEffect.js';
-import { updateItemByUuid } from '../scripts/item/updateItem.js';
 
 export const registerSocketListeners = function () {
     let SYSTEM_SOCKET = 'system.TheWitcherTRPG';
@@ -9,7 +8,7 @@ export const registerSocketListeners = function () {
         applyStatusEffectToActor,
         applyActiveEffectToActor,
         applyActiveEffectToActorViaId,
-        updateItemByUuid,
+        restoreReliability: 'item',
         createRegionFromTemplateUuids: 'item'
     };
 
