@@ -1,6 +1,5 @@
 import { extendedRoll } from "../../scripts/rolls/extendedRoll.js";
 import { RollConfig } from "../../scripts/rollConfig.js";
-import { updateItem } from "../../scripts/item/updateItem.js";
 import { WITCHER } from "../../setup/config.js";
 import { emitForGM } from "../../scripts/socket/socketMessage.js";
 
