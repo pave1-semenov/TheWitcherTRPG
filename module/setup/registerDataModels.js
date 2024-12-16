@@ -29,6 +29,7 @@ import WitcherChatMessage from '../chatMessage/witcherChatMessage.js';
 import WitcherTemporaryItemImprovementData from '../data/activeEffects/witcherTemporaryItemImprovementData.js';
 import HomelandData from '../data/item/homelandData.js';
 import BaseMessageData from '../data/chatMessage/baseMessageData.js';
+import ForageData from '../data/actor/forageData.js';
 
 export const registerDataModels = () => {
     foundry.utils.mergeObject(CONFIG.Actor.dataModels, {
@@ -36,6 +37,7 @@ export const registerDataModels = () => {
         character: CharacterData,
         monster: MonsterData,
         loot: LootData,
+        forage: ForageData,
 
         mystery: MysteryActorData
     });
