@@ -1,12 +1,13 @@
 {
     "Actor": {
-        "types": ["character", "monster", "loot", "mystery"],
+        "types": ["character", "monster", "loot", "mystery", "forage"],
         "templates": {
             "baseActor": {}
         },
         "character": {},
         "monster": {},
-        "loot": {}
+        "loot": {},
+        "forage": {}
     },
     "Item": {
         "types": [

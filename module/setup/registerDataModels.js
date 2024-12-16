@@ -22,6 +22,7 @@ import MysteryActorData from '../data/investigation/mysteryActorData.js';
 import GlobalModifierData from '../data/item/globalModifierData.js';
 import ActiveEffectData from '../data/activeEffects/activeEffectData.js';
 import SkillItemData from '../data/item/skillItemData.js';
+import ForageData from '../data/actor/forageData.js';
 
 export const registerDataModels = () => {
     foundry.utils.mergeObject(CONFIG.Actor.dataModels, {
@@ -29,6 +30,7 @@ export const registerDataModels = () => {
         character: CharacterData,
         monster: MonsterData,
         loot: LootData,
+        forage: ForageData,
 
         mystery: MysteryActorData
     });

@@ -1,0 +1,27 @@
+<div class="forage scrollable">
+    <!--   <h1><input name="name" type="text" value="{{actor.name}}" placeholder="Name" /></h1>
+    <div class="flex left-loot-border">
+        <div>
+            <img class="loot-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" />
+        </div>
+    </div> -->
+    <div class="item-section">
+        <h2>{{localize "WITCHER.Loot.Components"}} <a class="add-item" data-itemType="component"><i
+                    class="fas fa-plus"></i></a></h2>
+        <button class="button" data-action="importFromCompendium">Import</button>
+        <table class="item-table item-list">
+            <tr>
+                <td class="table-empty-space"></td>
+                <td></td>
+                <td><b>{{localize "WITCHER.table.Quantity"}}</b></td>
+                <td><b>{{localize "WITCHER.table.Name"}}</b></td>
+                <td><b>Rarity</b></td>
+                <td><b>Forage DC</b></td>
+                <td class="table-empty-end-space"></td>
+            </tr>
+            {{#each allComponents as |item id|}}
+            {{> "systems/TheWitcherTRPG/templates/partials/forage/forage-item.hbs" item=item isGM=../isGM}}
+            {{/each}}
+        </table>
+    </div>
+</div>

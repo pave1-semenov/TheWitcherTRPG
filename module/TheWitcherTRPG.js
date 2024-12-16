@@ -76,7 +76,10 @@ async function preloadHandlebarsTemplates() {
 
 
         'systems/TheWitcherTRPG/templates/chat/damage/damageToLocation.hbs',
-        'systems/TheWitcherTRPG/templates/chat/item/repair.hbs'
+        'systems/TheWitcherTRPG/templates/chat/item/repair.hbs',
+
+        'systems/TheWitcherTRPG/templates/sheets/actor/forage-sheet.hbs',
+        'systems/TheWitcherTRPG/templates/partials/forage/forage-item.hbs'
     ];
     return loadTemplates(templatePath);
 }
