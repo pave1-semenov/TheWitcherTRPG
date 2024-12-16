@@ -18,7 +18,71 @@ import WitcherActiveEffect from './activeEffect/witcherActiveEffect.js';
 import { registerHooks } from './setup/hooks.js';
 import { deprecationWarnings } from './setup/deprecations.js';
 import { applyActiveEffectToActorViaId } from './scripts/activeEffects/applyActiveEffect.js';
-import { preloadHandlebarsTemplates, registerHandelbarHelpers } from './setup/handlebars.js';
+
+async function preloadHandlebarsTemplates() {
+    const templatePath = [
+        'systems/TheWitcherTRPG/templates/sheets/actor/character-sheet.hbs',
+        'systems/TheWitcherTRPG/templates/sheets/actor/monster-sheet.hbs',
+        'systems/TheWitcherTRPG/templates/sheets/actor/loot-sheet.hbs',
+
+        'systems/TheWitcherTRPG/templates/partials/character-header.hbs',
+
+        'systems/TheWitcherTRPG/templates/partials/character/tab-skills.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/skill-display.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/custom-skill-display.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/tab-profession.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/tab-background.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/tab-inventory.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/tab-inventory-diagrams.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/tab-inventory-valuables.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/tab-inventory-mounts.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/tab-inventory-runes-glyphs.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/substances.hbs',
+        'systems/TheWitcherTRPG/templates/partials/character/tab-magic.hbs',
+        'systems/TheWitcherTRPG/templates/sheets/actor/partials/character/tab-effects.hbs',
+
+        'systems/TheWitcherTRPG/templates/partials/crit-wounds-table.hbs',
+
+        'systems/TheWitcherTRPG/templates/partials/monster/monster-skill-tab.hbs',
+        'systems/TheWitcherTRPG/templates/partials/monster/monster-inventory-tab.hbs',
+        'systems/TheWitcherTRPG/templates/partials/monster/monster-details-tab.hbs',
+        'systems/TheWitcherTRPG/templates/partials/monster/monster-spell-tab.hbs',
+        'systems/TheWitcherTRPG/templates/partials/monster/monster-skill-display.hbs',
+        'systems/TheWitcherTRPG/templates/partials/monster/monster-custom-skill-display.hbs',
+        'systems/TheWitcherTRPG/templates/partials/monster/monster-profession-skill-display.hbs',
+
+        'systems/TheWitcherTRPG/templates/partials/loot/loot-item-display.hbs',
+
+        'systems/TheWitcherTRPG/templates/partials/item-header.hbs',
+        'systems/TheWitcherTRPG/templates/partials/spell-header.hbs',
+        'systems/TheWitcherTRPG/templates/partials/item-image.hbs',
+        'systems/TheWitcherTRPG/templates/partials/associated-item.hbs',
+        'systems/TheWitcherTRPG/templates/partials/associated-diagram.hbs',
+        'systems/TheWitcherTRPG/templates/partials/effect-part.hbs',
+
+        'systems/TheWitcherTRPG/templates/sheets/item/configuration/partials/damagePropertiesConfiguration.hbs',
+        'systems/TheWitcherTRPG/templates/sheets/item/configuration/partials/defensePropertiesConfiguration.hbs',
+        'systems/TheWitcherTRPG/templates/sheets/item/configuration/partials/consumablePropertiesConfiguration.hbs',
+        'systems/TheWitcherTRPG/templates/sheets/item/configuration/partials/regionPropertiesConfiguration.hbs',
+
+        'systems/TheWitcherTRPG/templates/sheets/investigation/mystery-sheet.hbs',
+        'systems/TheWitcherTRPG/templates/partials/investigation/clue-display.hbs',
+        'systems/TheWitcherTRPG/templates/partials/investigation/obstacle-display.hbs',
+
+        'systems/TheWitcherTRPG/templates/dialog/verbal-combat.hbs',
+        'systems/TheWitcherTRPG/templates/dialog/repair-dialog.hbs',
+
+
+        'systems/TheWitcherTRPG/templates/chat/damage/damageToLocation.hbs',
+        'systems/TheWitcherTRPG/templates/chat/item/repair.hbs',
+
+        'systems/TheWitcherTRPG/templates/partials/components-list.hbs',
+
+        'systems/TheWitcherTRPG/templates/sheets/actor/forage-sheet.hbs',
+        'systems/TheWitcherTRPG/templates/partials/forage/forage-item.hbs'
+    ];
+    return loadTemplates(templatePath);
+}
 
 registerHooks();
 
