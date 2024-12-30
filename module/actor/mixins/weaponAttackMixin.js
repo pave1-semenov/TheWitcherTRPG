@@ -3,6 +3,8 @@ import { extendedRoll } from '../../scripts/rolls/extendedRoll.js';
 
 const DialogV2 = foundry.applications.api.DialogV2;
 
+const DialogV2 = foundry.applications.api.DialogV2;
+
 export let weaponAttackMixin = {
     async weaponAttack(weapon, options) {
         let displayRollDetails = game.settings.get('TheWitcherTRPG', 'displayRollsDetails');
@@ -69,6 +71,7 @@ export let weaponAttackMixin = {
             meleeBonus: meleeBonus
         };
 
+
         const dialogTemplate = await renderTemplate(
             'systems/TheWitcherTRPG/templates/dialog/combat/weapon-attack.hbs',
             data
@@ -96,11 +99,7 @@ export let weaponAttackMixin = {
             damageType,
             customDmg
         } = await DialogV2.prompt({
-            window: {
-                title: `${game.i18n.localize('WITCHER.Dialog.attackWith')}: ${weapon.name}`,
-                contentClasses: ['scrollable']
-            },
-            position: { width: 600 },
+            window: { title: `${game.i18n.localize('WITCHER.Dialog.attackWith')}: ${weapon.name}` },
             content: dialogTemplate,
             modal: true,
             ok: {
@@ -143,7 +142,16 @@ export let weaponAttackMixin = {
 
         if (isExtraAttack) {
             let newSta = this.system.derivedStats.sta.value - 3;
+        if (isExtraAttack) {
+            let newSta = this.system.derivedStats.sta.value - 3;
 
+            if (newSta < 0) {
+                return ui.notifications.error(game.i18n.localize('WITCHER.Spell.notEnoughSta'));
+            }
+            this.update({
+                'system.derivedStats.sta.value': newSta
+            });
+        }
             if (newSta < 0) {
                 return ui.notifications.error(game.i18n.localize('WITCHER.Spell.notEnoughSta'));
             }
@@ -159,6 +167,13 @@ export let weaponAttackMixin = {
             damage.damageProperties.effects.push(...item.system.damageProperties.effects);
             damage.ammunition = item;
         }
+        if (ammunition) {
+            let item = this.items.get(ammunition);
+            let newQuantity = item.system.quantity - 1;
+            item.update({ 'system.quantity': newQuantity });
+            damage.damageProperties.effects.push(...item.system.damageProperties.effects);
+            damage.ammunition = item;
+        }
 
         if (weapon.isWeaponThrowable()) {
             let newQuantity = weapon.system.quantity - 1;
@@ -167,7 +182,20 @@ export let weaponAttackMixin = {
             }
             weapon.update({ 'system.quantity': newQuantity });
         }
+        if (weapon.isWeaponThrowable()) {
+            let newQuantity = weapon.system.quantity - 1;
+            if (newQuantity < 0) {
+                return;
+            }
+            weapon.update({ 'system.quantity': newQuantity });
+        }
 
+        weapon.system.enhancementItems?.forEach(element => {
+            if (element && JSON.stringify(element) != '{}') {
+                let enhancement = this.items.get(element.id);
+                damage.damageProperties.effects.push(...enhancement.system.effects);
+            }
+        });
         weapon.system.enhancementItems?.forEach(element => {
             if (element && JSON.stringify(element) != '{}') {
                 let enhancement = this.items.get(element.id);
@@ -187,10 +215,89 @@ export let weaponAttackMixin = {
             attFormula += !displayRollDetails
                 ? `${this.system.stats[skill.attribute.name].current}+${this.system.skills[skill.attribute.name][skill.name].value}`
                 : `${this.system.stats[skill.attribute.name].current}[${game.i18n.localize(skill.attribute.label)}]+${this.system.skills[skill.attribute.name][skill.name].value}[${game.i18n.localize(skill.label)}]`;
+        if (strike == 'fast') {
+            attacknumber = 2;
+        }
+        for (let i = 0; i < attacknumber; i++) {
+            let attFormula = '1d10+';
+            let skill = CONFIG.WITCHER.skillMap[attackSkill.name];
+            if (game.settings.get('TheWitcherTRPG', 'woundsAffectSkillBase')) {
+                attFormula += '(';
+            }
+            attFormula += !displayRollDetails
+                ? `${this.system.stats[skill.attribute.name].current}+${this.system.skills[skill.attribute.name][skill.name].value}`
+                : `${this.system.stats[skill.attribute.name].current}[${game.i18n.localize(skill.attribute.label)}]+${this.system.skills[skill.attribute.name][skill.name].value}[${game.i18n.localize(skill.label)}]`;
 
             attFormula = this.handleSpecialModifier(attFormula, strike);
             attFormula += this.addAllModifiers(attackSkill.name);
+            attFormula = this.handleSpecialModifier(attFormula, strike);
+            attFormula += this.addAllModifiers(attackSkill.name);
 
+            if (weapon.system.accuracy < 0) {
+                attFormula += !displayRollDetails
+                    ? `${weapon.system.accuracy}`
+                    : `${weapon.system.accuracy}[${game.i18n.localize('WITCHER.Weapon.Short.WeaponAccuracy')}]`;
+            }
+            if (weapon.system.accuracy > 0) {
+                attFormula += !displayRollDetails
+                    ? `+${weapon.system.accuracy}`
+                    : `+${weapon.system.accuracy}[${game.i18n.localize('WITCHER.Weapon.Short.WeaponAccuracy')}]`;
+            }
+            if (targetOutsideLOS) {
+                attFormula += !displayRollDetails
+                    ? `-3`
+                    : `-3[${game.i18n.localize('WITCHER.Dialog.attackTargetOutsideLOS')}]`;
+            }
+            if (outsideLOS) {
+                attFormula += !displayRollDetails
+                    ? `+3`
+                    : `+3[${game.i18n.localize('WITCHER.Dialog.attackOutsideLOS')}]`;
+            }
+            if (isExtraAttack) {
+                attFormula += !displayRollDetails ? `-3` : `-3[${game.i18n.localize('WITCHER.Dialog.attackExtra')}]`;
+            }
+            if (isFastDraw) {
+                attFormula += !displayRollDetails
+                    ? `-3`
+                    : `-3[${game.i18n.localize('WITCHER.Dialog.attackIsFastDraw')}]`;
+            }
+            if (isProne) {
+                attFormula += !displayRollDetails ? `-2` : `-2[${game.i18n.localize('WITCHER.Dialog.attackIsProne')}]`;
+            }
+            if (isPinned) {
+                attFormula += !displayRollDetails ? `+4` : `+4[${game.i18n.localize('WITCHER.Dialog.attackIsPinned')}]`;
+            }
+            if (isActivelyDodging) {
+                attFormula += !displayRollDetails
+                    ? `-2`
+                    : `-2[${game.i18n.localize('WITCHER.Dialog.attackIsActivelyDodging')}]`;
+            }
+            if (isMoving) {
+                attFormula += !displayRollDetails ? `-3` : `-3[${game.i18n.localize('WITCHER.Dialog.attackIsMoving')}]`;
+            }
+            if (isAmbush) {
+                attFormula += !displayRollDetails ? `+5` : `+5[${game.i18n.localize('WITCHER.Dialog.attackIsAmbush')}]`;
+            }
+            if (isRicochet) {
+                attFormula += !displayRollDetails
+                    ? `-5`
+                    : `-5[${game.i18n.localize('WITCHER.Dialog.attackIsRicochet')}]`;
+            }
+            if (isBlinded) {
+                attFormula += !displayRollDetails
+                    ? `-3`
+                    : `-3[${game.i18n.localize('WITCHER.Dialog.attackIsBlinded')}]`;
+            }
+            if (isSilhouetted) {
+                attFormula += !displayRollDetails
+                    ? `+2`
+                    : `+2[${game.i18n.localize('WITCHER.Dialog.attackIsSilhouetted')}]`;
+            }
+            if (customAim > 0) {
+                attFormula += !displayRollDetails
+                    ? `+${customAim}`
+                    : `+${customAim}[${game.i18n.localize('WITCHER.Dialog.attackCustom')}]`;
+            }
             if (weapon.system.accuracy < 0) {
                 attFormula += !displayRollDetails
                     ? `${weapon.system.accuracy}`
@@ -262,7 +369,34 @@ export let weaponAttackMixin = {
                     ? `+${customAtt}`
                     : `+${customAtt}[${game.i18n.localize('WITCHER.Settings.Custom')}]`;
             }
+            if (customAtt != '0') {
+                attFormula += !displayRollDetails
+                    ? `+${customAtt}`
+                    : `+${customAtt}[${game.i18n.localize('WITCHER.Settings.Custom')}]`;
+            }
 
+            switch (range) {
+                case 'pointBlank':
+                    attFormula = !displayRollDetails
+                        ? `${attFormula}+5`
+                        : `${attFormula} +5[${game.i18n.localize('WITCHER.Weapon.Range')}]`;
+                    break;
+                case 'medium':
+                    attFormula = !displayRollDetails
+                        ? `${attFormula}-2`
+                        : `${attFormula} -2[${game.i18n.localize('WITCHER.Weapon.Range')}]`;
+                    break;
+                case 'long':
+                    attFormula = !displayRollDetails
+                        ? `${attFormula}-4`
+                        : `${attFormula} -4[${game.i18n.localize('WITCHER.Weapon.Range')}]`;
+                    break;
+                case 'extreme':
+                    attFormula = !displayRollDetails
+                        ? `${attFormula}-6`
+                        : `${attFormula} -6[${game.i18n.localize('WITCHER.Weapon.Range')}]`;
+                    break;
+            }
             switch (range) {
                 case 'pointBlank':
                     attFormula = !displayRollDetails
@@ -292,6 +426,12 @@ export let weaponAttackMixin = {
                     : `+${customDmg}[${game.i18n.localize('WITCHER.Settings.Custom')}]`;
             }
             damage.formula = damageFormula;
+            if (customDmg != '0') {
+                damageFormula += !displayRollDetails
+                    ? `+${customDmg}`
+                    : `+${customDmg}[${game.i18n.localize('WITCHER.Settings.Custom')}]`;
+            }
+            damage.formula = damageFormula;
 
             let touchedLocation = this.getLocationObject(location);
             attFormula += !displayRollDetails
@@ -299,7 +439,26 @@ export let weaponAttackMixin = {
                 : `${touchedLocation.modifier}[${touchedLocation.alias}]`;
             damage.location = touchedLocation;
             damage.originalLocation = location;
+            let touchedLocation = this.getLocationObject(location);
+            attFormula += !displayRollDetails
+                ? `${touchedLocation.modifier}`
+                : `${touchedLocation.modifier}[${touchedLocation.alias}]`;
+            damage.location = touchedLocation;
+            damage.originalLocation = location;
 
+            if (strike == 'joint') {
+                attFormula = !displayRollDetails
+                    ? `${attFormula} -3${
+                          this.system.lifepathModifiers.jointStrikeAttackBonus > 0
+                              ? ` +${this.system.lifepathModifiers.jointStrikeAttackBonus}`
+                              : ''
+                      }`
+                    : `${attFormula} -3[${game.i18n.localize('WITCHER.Dialog.attackStrike')}]${
+                          this.system.lifepathModifiers.jointStrikeAttackBonus > 0
+                              ? ` +${this.system.lifepathModifiers.jointStrikeAttackBonus}[${game.i18n.localize('WITCHER.Actor.Lifepath.Bonus')}]`
+                              : ''
+                      }`;
+            }
             if (strike == 'joint') {
                 attFormula = !displayRollDetails
                     ? `${attFormula} -3${
@@ -329,13 +488,28 @@ export let weaponAttackMixin = {
                     }`;
                 }
             }
+            if (strike == 'strong') {
+                if (!displayRollDetails) {
+                    attFormula = `${attFormula} -3${
+                        this.system.lifepathModifiers.strongStrikeAttackBonus > 0
+                            ? ` +${this.system.lifepathModifiers.strongStrikeAttackBonus}`
+                            : ''
+                    }`;
+                } else {
+                    attFormula = `${attFormula} -3[${game.i18n.localize('WITCHER.Dialog.attackStrike')}]${
+                        this.system.lifepathModifiers.strongStrikeAttackBonus > 0
+                            ? ` +${this.system.lifepathModifiers.strongStrikeAttackBonus}[${game.i18n.localize('WITCHER.Actor.Lifepath.Bonus')}]`
+                            : ''
+                    }`;
+                }
+            }
 
-            messageData.flavor = `<div class="attack-message"><h1><img src="${weapon.img}" class="item-img" />${game.i18n.localize('WITCHER.Attack.name')}: ${weapon.name}</h1>`;
+            messageData.flavor = `<div class="attack-message"><h1><img src="${weapon.img}" class="item-img" />${game.i18n.localize('WITCHER.Attack')}: ${weapon.name}</h1>`;
             messageData.flavor += `<span>  ${game.i18n.localize('WITCHER.Armor.Location')}: ${touchedLocation.alias} </span>`;
 
             messageData.flavor += `<button class="damage">${game.i18n.localize('WITCHER.table.Damage')}</button>`;
             if (weapon.system.rollOnlyDmg) {
-                weapon.rollDamage(damage);
+                rollDamage(weapon, damage);
             } else {
                 messageData.flags = {
                     TheWitcherTRPG: {
@@ -343,7 +517,7 @@ export let weaponAttackMixin = {
                         damage: damage
                     }
                 };
-                await extendedRoll(attFormula, messageData);
+                await extendedRoll(attFormula, messageData, new RollConfig());
             }
         }
     }
