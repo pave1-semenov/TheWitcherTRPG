@@ -1,12 +1,12 @@
-import { itemMixin } from './mixins/itemMixin.js'
 import { getInteractActor } from '../../scripts/helper.js'
 import { RollConfig } from '../../scripts/rollConfig.js'
 import { extendedRoll } from '../../scripts/rolls/extendedRoll.js'
+import { ItemEditMixin } from './mixins/itemEditMixin.js'
 
 const ActorSheetV2 = foundry.applications.sheets.ActorSheetV2
 const { HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api
 
-export default class WitcherForageSheet extends HandlebarsApplicationMixin(ActorSheetV2) {
+export default class WitcherForageSheet extends HandlebarsApplicationMixin(ItemEditMixin(ActorSheetV2)) {
     static PARTS = {
         form: {
             template: 'systems/TheWitcherTRPG/templates/sheets/actor/forage-sheet.hbs'
@@ -22,7 +22,8 @@ export default class WitcherForageSheet extends HandlebarsApplicationMixin(Actor
         dragDrop: [{ dragSelector: '[data-drag]', dropSelector: null }],
         actions: {
             forage: WitcherForageSheet._onForage,
-            importFromCompendium: WitcherForageSheet._fromCompendium
+            importFromCompendium: WitcherForageSheet._fromCompendium,
+            editItem: WitcherForageSheet._onItemEdit
         }
     }
 
@@ -105,7 +106,7 @@ export default class WitcherForageSheet extends HandlebarsApplicationMixin(Actor
             const foundItems = (await Promise.all(promises)).flat().filter(c => c.system.location.toLowerCase().includes(location))
 
             foundItems.forEach(f => this.actor.addItem(f, 1))
-            
+
         }
     }
 
@@ -190,6 +191,11 @@ export default class WitcherForageSheet extends HandlebarsApplicationMixin(Actor
         // game.user fetches the current user
         return this.isEditable;
     }
-}
 
-Object.assign(WitcherForageSheet.prototype, itemMixin)
+    _onRender(context, options) {
+        // Inputs with class `item-quantity`
+        Array.from(this.element.querySelectorAll('.inline-edit')).forEach((input) => {
+            input.addEventListener("change", this._onItemInlineEdit.bind(this))
+        })
+    }
+}

@@ -7,7 +7,7 @@
 {{else}}
     <tr class="item" data-item-id="{{item._id}}">
 {{/if}}
-    <td><a class="item-edit"><i class="fas fa-edit"></i></a></td>
+    <td><a data-action="editItem"><i class="fas fa-edit"></i></a></td>
     <td><img src="{{item.img}}" class="item-img dragable" draggable="true" data-id="{{item._id}}"/></td>
     <td><input class="inline-edit" data-field="system.quantityObtainable" type="text"
                value="{{item.system.quantityObtainable}}"/></td>
